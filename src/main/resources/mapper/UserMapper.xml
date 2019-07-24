@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper SYSTEM "../mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.shirotest.mapper.UserMapper">
+	<resultMap type="com.example.shirotest.model.User"
+		id="UserMap">
+		<id property="uid" column="uid" />
+		<result property="username" column="username" />
+		<result property="password" column="password" />
+		<collection property="roles"
+			ofType="com.example.shirotest.model.Role">
+			<id property="rid" column="rid" />
+			<result property="rname" column="rname" />
+			<collection property="permission" ofType="com.example.shirotest.model.Permission">
+			<id property="pid" column="pid"/>
+			<result property="name" column="name"/>
+			<result property="url" column="url"/>
+			</collection>
+		</collection>
+	</resultMap>
+	
+	<select id="findByUsername" parameterType="String" resultMap="UserMap">
+		SELECT u.*,r.*,p.* FROM user u 
+		inner join user_role ur on u.uid=ur.uid 
+		inner join role r on ur.rid=r.rid 
+		inner join permission_role pr on r.rid=pr.rid 
+		inner join permission p on p.pid=pr.pid 
+		WHERE u.username = #{username}
+	</select>
+</mapper>
